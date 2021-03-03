@@ -3,10 +3,113 @@ import Title from "./Title"
 import styled from "styled-components"
 import base from "./Airtable"
 import { FaVoteYea } from "react-icons/fa"
+import { useStaticQuery } from "gatsby"
+
+/* console.log(base) */
+
 
 const Survey = () => {
-  return <h2>survey component</h2>
-}
+
+  const [items, setItems]=useState([]);
+  const [loading, setLoading] = useState(false);
+
+
+  //fetching data dynamically with airtable. don't forget to pass in useeffect
+  const getRecords = async () => {
+
+    const records = await base('Survey')
+      .select({})
+      .firstPage()
+      .catch(err => console.log(err)
+      ) /* Survey is the name of the table on Airtable and base is basically the key set in Airtable.js. this means we are connecting to airtable server to fetch data. then, other than select you have other options like distroy create etc. by doing this select({}) not passing anything, we are requesting all the records. */
+  
+
+    /* console.log(records) */
+    const newItems = records.map((record) => {
+      const {id, fields} = record /* if you look at the console.log of the records, you'll see there are many paramateres but we are niterested in id and fields which is where our data is */
+      return {id, fields}
+    })
+
+    setItems(newItems) /* now items is not empty array anymore but it has beebn populated with the data coming from airtable. check the console.log below */
+    setLoading(false)/* because now we fetched the data */
+
+  }
+
+  useEffect(() => {
+    getRecords()
+  }, [])
+
+  console.log(items)
+
+
+  const giveVote = async id => { /* id is the parameter we are pasisng */
+    setLoading(true)
+    const tempItems = [...items].map((item) => { /* we are spreading all the items from the state and mapping over them. then we are checking whether the item id is matching the one that i am passing by clicking on it */
+      if (item.id === id) {
+        let {id, fields} = item; /* we first destructure and then re write it */
+        fields ={...fields, votes:fields.votes + 1} /* we spread because in fields we have both name and votes but then we only update votes*/
+        return {id, fields} /* then we return the id with the new value of the fields */
+
+      }else {
+          return item /* if they don't match we don't do anything */
+        }
+    })
+
+
+    const records = await base('Survey').update(tempItems).catch(
+      err => console.log(err)
+    ) /* check docs https://airtable.com/apphpSdjRObpee3QV/api/docs#javascript/table:costumers:update */
+
+    //all this is now the same as the thing we did above
+    const newItems = records.map((record) => {
+      const {id, fields} = record 
+      return {id, fields}
+    })
+
+    setItems(newItems) 
+    setLoading(false)
+
+
+  }
+
+
+  return ( 
+    <Wrapper className='section'>
+      <div className='container'>
+        <Title title='survey'></Title>
+        <h3>
+          most important room in the house?
+        </h3>
+
+        {loading?<h3>loading...</h3> : <ul>
+          {items.map((item) => {
+            const {id, fields:{name, votes}} = item
+            return <li key={id}>
+              <div className='key'>
+                {name.toUpperCase().substring(0,2)}{/* instead of css you can also use javascript to make uppercase. then with substrings we get only the first 2 values*/}
+              </div>
+
+              <div>
+                <h4>{name}</h4>
+                <p>{votes} votes</p>
+              </div>
+
+              <button onClick={() => giveVote(id) }>
+                <FaVoteYea />
+              </button>
+              
+            </li>
+          })}
+          </ul>}
+
+      </div>
+
+    </Wrapper>
+  )
+  }
+
+
+
 
 const Wrapper = styled.section`
   .container {

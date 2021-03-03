@@ -6,9 +6,94 @@ import Image from "gatsby-image"
 import { FaQuoteRight } from "react-icons/fa"
 import { FiChevronRight, FiChevronLeft } from "react-icons/fi"
 
+
+const query = graphql`
+  {
+    allAirtable(filter: {table: {eq: "Costumers"}}) {
+      nodes {
+        data {
+          name
+          quote
+          title
+          image {
+            localFiles {
+              childImageSharp {
+                fixed (width:150, height:150) {
+                  ...GatsbyImageSharpFixed
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
+
 const Slider = () => {
-  return <h2>slider component</h2>
+
+  const { allAirtable:{ nodes:costumers } } = useStaticQuery(query);
+  const [index, setIndex] = React.useState(0)
+  
+
+  React.useEffect(() => { 
+    const lastIndex = costumers.length - 1
+    if(index < 0) {
+      setIndex(lastIndex)
+    }
+    if (index > lastIndex) {
+      setIndex(0)
+      }
+
+    }, [index, costumers]) /* with use effect we are trying to mak the slider go back to 0 once we got to the end of the array with the last costumer */
+
+
+  return <Wrapper>
+    <Title title='reviews' />
+    <div className='section-center'>
+      { costumers.map((costumer, costumerIndex) => {  /* don't confuse this index that i named costumerIndex and  reflects the item index in the arrey where costumers are. Index above is just hardcoded to be 0 initially */
+
+        const{ data:{ image,name,title, quote } } =costumer;
+        const costumerImg = image.localFiles[0].childImageSharp.fixed;
+       
+
+        //setting logic for slide
+        let position = 'nextSlide';
+
+        if (costumerIndex === index) { 
+          position = 'activeSlide'
+         }
+
+        if(costumerIndex === index - 1 || (index === 0 && costumerIndex === costumer.length -1)) { /* we are adding this condition because we don't want to get to the end of the array, clicking nexrt and not having anything to display because all the previosu costumers have been pushed out of the screen on the left */
+         
+          position = 'lastSlide'
+         }
+
+         //end logic for slide
+        
+       return <article className={ position } key={ costumerIndex }>
+          <Image fixed={ costumerImg } className='img' />
+          <h4>{ name }</h4>
+          <p className='title'>{ title }</p>
+          <p className='text'>{ quote }</p>
+          <FaQuoteRight class='icon' />
+          </article>
+     } ) }
+
+      <button class='prev' onClick={ () => setIndex(index-1) }>
+        <FiChevronLeft />
+      </button>
+
+      <button class='next' onClick={ () => setIndex(index+1) }>
+        <FiChevronRight />
+      </button>
+
+    </div>
+
+    </Wrapper>
 }
+
 
 const Wrapper = styled.div`
   background: var(--clr-grey-10);

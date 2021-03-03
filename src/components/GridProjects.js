@@ -3,8 +3,30 @@ import Title from "./Title"
 import Image from "gatsby-image"
 import styled from "styled-components"
 import { Link } from "gatsby"
-const GridProjects = () => {
-  return <h2>grid projects</h2>
+const GridProjects = ({ projects, title }) => {
+  return <Wrapper>
+    <Title title={ title || 'project' }  />
+    <div className='tile-layout'>
+      { projects.map((project,index) => { 
+        const { id } = project
+        const { name, type } = project.data
+        const fluid = project.data.image.localFiles[0].childImageSharp.fluid
+        return <article key={ index } className={`div-${ index }` }>{/* we associated a div with a certain index to each grid, for example aa that foes vertically is associated to div-0 etc.. NOTE, THIS CLASSES ONLY MATTTER IN BIG SCREEN LOOK AT MEDIA QUERY*/}
+          <Image className='img' fluid={ fluid } />
+
+          <div className='info'>
+            <p>- { type } -</p>
+            <h3>{ name }</h3>
+          </div>
+
+        </article>
+       }
+      ) }
+    </div>
+    <Link to='/projects' className='btn'>
+      all projects
+    </Link>
+  </Wrapper>
 }
 
 const Wrapper = styled.section`
@@ -24,7 +46,7 @@ const Wrapper = styled.section`
   }
   /* GOTCHA!!!!! */
   .img {
-    height: 100%;
+    height: 100%; /* dont forget this!! */
     border-radius: var(--radius);
     transition: var(--transition);
   }

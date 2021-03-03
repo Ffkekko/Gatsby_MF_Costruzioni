@@ -1,3 +1,5 @@
+/* NOTE, yes as usual you can set up these services on an externam CMS like airtable but because the services are most likley to be fixed and not change often maybe it is better to go fot this path */
+
 import React from "react"
 import {
   GiCompass,

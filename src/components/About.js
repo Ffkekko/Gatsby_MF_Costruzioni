@@ -3,8 +3,28 @@ import styled from "styled-components"
 import Title from "./Title"
 import services from "../constants/services"
 const About = () => {
-  return <h2>about component</h2>
+  return <Wrapper className='section'> {/* this class is one of those that come form the global css in root file. we put this one there because section is one of those style that we use over and over */}
+    <Title title='about us' />
+    <div className='section-center'>
+      {services.map(({id, icon, label, text}) => {
+        return <article key={id}>
+          <span>
+            {icon}
+          </span>
+          <h4>
+            {label}
+          </h4>
+          <p>
+            {text}
+          </p>
+
+        </article>
+      })}
+    </div>
+  </Wrapper>
 }
+
+
 const Wrapper = styled.section`
   .section-center {
     margin-top: 4rem;

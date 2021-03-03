@@ -4,9 +4,54 @@ import logo from "../images/logo.svg"
 import { GoThreeBars } from "react-icons/go"
 import { Link } from "gatsby"
 import NavLink from "./NavLink"
+import { GatsbyContext } from '../context/context' 
 
 const Navbar = () => {
-  return <h2>navbar component</h2>
+
+  const { isSidebarOpen, showSidebar, links } = useContext(GatsbyContext)
+
+  const tempLinks = [...new Set(links.map(link => { 
+    return link.page
+   }
+  ))]
+
+  return <Wrapper>
+    <div className='nav-center'>
+      <div className='nav-header'>
+        <Link to='/'>
+          <img src={ logo } alt='design'></img>
+        
+        </Link>
+        { !isSidebarOpen  &&
+          <button className='toggle-btn' onClick={ showSidebar }>
+            <GoThreeBars />
+          </button> /* we don't want to display the burger button if the sidebar is open */
+        }
+        
+      </div>
+        {/* <ul className='nav-links'>
+          <li>
+            <button>products</button>
+          </li>
+           <li>
+            <button>developers</button>
+          </li>
+           <li>
+            <Link to='/products/payments'>company</Link>
+          </li>
+        </ul> */}
+
+        <ul className='nav-links'>
+          { tempLinks.map((page, index) => { 
+            return <NavLink key={ index } page={ page } />
+           }
+          ) }
+
+        </ul>
+
+      </div>
+    
+  </Wrapper>
 }
 
 const Wrapper = styled.nav`
@@ -25,7 +70,7 @@ const Wrapper = styled.nav`
     color: var(--clr-white);
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; // dont forget this
     img {
       width: auto;
     }
