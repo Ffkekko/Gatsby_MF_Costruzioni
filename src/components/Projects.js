@@ -56,8 +56,7 @@ const Projects = ({ projects: data, title, page }) => {
 
         </div>
 
-          
-
+      
       </article>
 
       /*  <Image fluid={ fluid } className={ `Big ${ img? 'Visible':'' }` } /> */
