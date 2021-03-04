@@ -7,11 +7,12 @@ import SearchButtons from "./SearchButtons"
 const Projects = ({ projects: data, title, page }) => {
 
   const [projects, setProjects] = React.useState(data);
- /*  const [img, setImg] = React.useState(false);
+  /* const [img, setImg] = React.useState(false); */
   
-  const toggle= () => { 
+  /* const toggle= () => { 
     setImg(!img)
    } */
+
 
   const setBackToAll = () => 
   { 
@@ -32,17 +33,21 @@ const Projects = ({ projects: data, title, page }) => {
     )}
 
   <div className='section-center'> {/* we are gonna have 3 projects here because that's what we filtered in index.js with graphql */}
-    { projects.map((item) => { 
+    { projects.map((item) => {
+    
       console.log(item)
       const { id } =item; /* we get id from item which is basically each node */
       const { name, type } = item.data; /* we get the name and type from the data within each node */
       const fluid =  item.data.image.localFiles[0].childImageSharp.fluid
       
-      
+      /* const idProp = ()  => { 
+        console.log(item.id)
+     } */
+
       return (
         
-      <article key={ id }>
-        <div className='container' /* onClick={ toggle } */>
+      <article key={ id } /* onClick={ idProp } */>
+        <div className='container'  /* onClick={ toggle } */>
           <Image fluid={ fluid } className='img' />
           <div className='info'>
             <p>
@@ -56,10 +61,14 @@ const Projects = ({ projects: data, title, page }) => {
 
         </div>
 
+      {/* { item.id && 
+        <Image fluid={ fluid } className={ `Big ${ img? 'Visible':'' }` } />
+      } */}
       
       </article>
 
-      /*  <Image fluid={ fluid } className={ `Big ${ img? 'Visible':'' }` } /> */
+      
+      
       )
      }
     ) }
@@ -151,7 +160,7 @@ const Wrapper = styled.section`
     margin-top: 3rem;
   }
 
-  /*  .Big {
+    /* .Big {
       display:none
     }
     .Visible {
