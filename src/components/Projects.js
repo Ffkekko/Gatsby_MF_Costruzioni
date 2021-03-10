@@ -1,13 +1,20 @@
-import React from "react"
+import React, { useContext, useState} from "react"
 import { Link } from "gatsby"
 import Title from "./Title"
 import styled from "styled-components"
 import Image from "gatsby-image"
 import SearchButtons from "./SearchButtons"
+/* import { GatsbyContext } from '../context/context' */
+
+
 const Projects = ({ projects: data, title, page }) => {
 
   const [projects, setProjects] = React.useState(data);
-  /* const [img, setImg] = React.useState(false); */
+     const [index, setIndex] = React.useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false)
+     /* const [img, setImg] = React.useState(false); */
+
+  /* const {  isModalOpen, showLightbox,  hideLightbox }= useContext(GatsbyContext); */
   
   /* const toggle= () => { 
     setImg(!img)
@@ -19,6 +26,28 @@ const Projects = ({ projects: data, title, page }) => {
     setProjects(data)
    } /* yes, we are already passing it in useState above, but remember that this value will change when filtering that's why we need a setProjects function */
 
+
+const showLightbox = (e, index)  => { 
+        e.preventDefault()
+        setIsModalOpen(true);
+        setIndex(index)
+        /*  { projects.map((item, projectIndex) => {
+              console.log(item.id)
+               const fluid =  item.data.image.localFiles[0].childImageSharp.fluid
+          
+            if (projectIndex === index) { 
+            position = 'show'
+         } else  { 
+            position = 'hide'
+         }
+            })
+         } */
+     }
+   
+   
+ const hideLightbox = ()  => { 
+        setIsModalOpen(false)
+     }
 
   return <Wrapper className='section'>
 
@@ -32,10 +61,11 @@ const Projects = ({ projects: data, title, page }) => {
       /> 
     )}
 
+
   <div className='section-center'> {/* we are gonna have 3 projects here because that's what we filtered in index.js with graphql */}
-    { projects.map((item) => {
+    { projects.map((item, projectIndex) => {
     
-      console.log(item)
+      /* console.log(item) */
       const { id } =item; /* we get id from item which is basically each node */
       const { name, type } = item.data; /* we get the name and type from the data within each node */
       const fluid =  item.data.image.localFiles[0].childImageSharp.fluid
@@ -45,9 +75,8 @@ const Projects = ({ projects: data, title, page }) => {
      } */
 
       return (
-        
       <article key={ id } /* onClick={ idProp } */>
-        <div className='container'  /* onClick={ toggle } */>
+        <div className='container' onClick={ e => showLightbox(e,projectIndex) }  /* onClick={ toggle } */>
           <Image fluid={ fluid } className='img' />
           <div className='info'>
             <p>
@@ -58,12 +87,9 @@ const Projects = ({ projects: data, title, page }) => {
             </h3>
           </div>
 
+            
 
         </div>
-
-      {/* { item.id && 
-        <Image fluid={ fluid } className={ `Big ${ img? 'Visible':'' }` } />
-      } */}
       
       </article>
 
@@ -73,6 +99,49 @@ const Projects = ({ projects: data, title, page }) => {
      }
     ) }
   </div>
+
+<>
+{ isModalOpen  &&
+<div>
+  { projects.map((item, lightboxIndex) => {
+
+      const fluid =  item.data.image.localFiles[0].childImageSharp.fluid
+      
+      let position = 'hide';
+     if (lightboxIndex === index) { 
+            position = 'show'
+         } else  { 
+            position = 'hide'
+         }
+      /* const idProp = ()  => { 
+        console.log(item.id)
+     } */
+
+      return (
+
+      <Wrapper1>
+
+        <div className={ position } onClick={ hideLightbox } /* key={ projectIndex } */> 
+
+          <div className='lightboxModal'>
+
+            <Image fluid={ fluid } className='Visible' /> 
+
+          </div>
+
+        </div>
+
+
+      </Wrapper1>
+       
+      )
+     
+      }
+  )}
+  </div>
+   }
+       
+       </>
 
   { !page && (
   <Link to='/projects' className='btn'>
@@ -105,6 +174,7 @@ const Wrapper = styled.section`
     }
     article:hover {
       box-shadow: var(--dark-shadow);
+      cursor: pointer;
     }
     .container {
       position: relative;
@@ -159,19 +229,65 @@ const Wrapper = styled.section`
     margin: 0 auto;
     margin-top: 3rem;
   }
-
-    /* .Big {
-      display:none
-    }
-    .Visible {
-      display:block;
-      position:fixed;
-      top:50%;
-      left:50%;
-      width: 40rem;
-      height:auto;
-      border-radius: var(--radius);
-      transition: var(--transition);
-    } */
 `
+
+const Wrapper1 = styled.section`
+
+.lightboxModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .Visible {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      height: 60%; // or whatever
+      width: 50%;
+
+  }
+    .lightboxModal {
+      background-color:rgba(0, 0, 0, 0.5);
+       backdrop-filter:blur(0.2rem) grayscale(60%)
+    }
+
+  .show {
+      display:block;
+  }
+
+   .hide {
+      display:none;
+  }
+`
+
 export default Projects
+
+
+/* export const query = graphql`
+  {
+    allAirtable(filter: {table: {eq: "Projects"}}) {
+      nodes {
+        id
+        data {
+          image {
+            localFiles {
+              childImageSharp {
+                fluid {
+                  ...GatsbyImageSharpFluid
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`
+ */

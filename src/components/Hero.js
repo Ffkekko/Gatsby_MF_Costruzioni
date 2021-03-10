@@ -35,9 +35,9 @@ const Hero = ({ projects }) => {
   <Wrapper>
     <Background image={ images[index] }> {/* we took the images from the query in index.js, we pdestructure above and pass the prop here in background and then go to work in Background.js */}
       <article>
-        <h3>If oyu can dream it we can create it</h3>
-        <h1> let your home be unique and stylish</h1>
-        <Link to='/projects'>Projects</Link>
+        <h3>Se tu puoi sognarlo noi possiamo costruirlo</h3>
+        <h1> lascia che la tua casa sia unica ed elegante</h1>
+        <Link to='/projects'>Progetti</Link>
       </article>
       <button className='prev-btn' onClick={() => setIndex(index -1)}>
         <FiChevronLeft />

@@ -18,7 +18,7 @@ const Navbar = () => {
   return <Wrapper>
     <div className='nav-center'>
       <div className='nav-header'>
-        <Link to='/'>
+        <Link to='/' activeClassName="active">
           <img src={ logo } alt='design'></img>
         
         </Link>
@@ -42,6 +42,7 @@ const Navbar = () => {
         </ul> */}
 
         <ul className='nav-links'>
+          
           { tempLinks.map((page, index) => { 
             return <NavLink key={ index } page={ page } />
            }
@@ -65,6 +66,9 @@ const Wrapper = styled.nav`
     width: 90vw;
     margin: 0 auto;
     max-width: var(--max-width);
+  }
+   .active {
+    color:red
   }
   .nav-header {
     color: var(--clr-white);

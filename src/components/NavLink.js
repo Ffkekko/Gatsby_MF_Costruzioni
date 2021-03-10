@@ -16,9 +16,12 @@ const NavLink = ( { page }) => {
            const { url, label, icon } = link
            if(link.page === page) { /* i juist want to display, on hover, the sublink of a specific page */
              return (
+               
+              
               <Link to={ url } key= { index }>
                { icon }{ label }
               </Link>
+              
              )
             }
           }
